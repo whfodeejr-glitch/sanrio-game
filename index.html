@@ -34,14 +34,13 @@
         }
 
         canvas {
-            /* 배경 이미지가 살짝 비치도록 투명도 조정 */
-            background-color: rgba(255, 255, 255, 0.4);
+            /* 배경 이미지가 잘 보이도록 캔버스 자체 배경을 매우 투명하게 조절 */
+            background-color: rgba(255, 255, 255, 0.2);
             border: 6px solid #ffb6c1;
             border-radius: 24px;
             box-shadow: 0 15px 35px rgba(255, 182, 193, 0.4);
             max-width: 95vw;
             max-height: 70vh;
-            backdrop-filter: blur(3px);
         }
 
         .ui-panel {
@@ -51,7 +50,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 12px 25px;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.85);
             border-radius: 20px;
             margin-bottom: 15px;
             border: 3px solid #ffb6c1;
@@ -98,18 +97,19 @@
             left: 0;
             width: 100%;
             height: 100%;
-            /* 오버레이 배경도 살짝 투명하게 하여 배경이 보이도록 함 */
-            background: rgba(255, 238, 242, 0.7);
+            /* 배경 이미지가 그대로 보이도록 오버레이 배경을 투명하게 설정 */
+            background: rgba(255, 255, 255, 0); 
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             z-index: 20;
-            backdrop-filter: blur(5px);
+            /* 블러 효과 제거 */
+            backdrop-filter: none;
         }
 
         .ai-comment-box {
-            background: white;
+            background: rgba(255, 255, 255, 0.95);
             padding: 15px;
             border-radius: 20px;
             border: 2px dashed #ffb6c1;
@@ -117,6 +117,7 @@
             max-width: 300px;
             position: relative;
             animation: bounce 2s infinite;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
         @keyframes bounce {
@@ -158,11 +159,11 @@
         </div>
     </div>
 
-    <!-- 오버레이 -->
+    <!-- 오버레이 (배경 투명화 버전) -->
     <div id="message-overlay">
-        <div class="bg-white p-8 rounded-[40px] border-8 border-pink-200 shadow-2xl flex flex-col items-center max-w-[90vw]">
-            <h1 id="msg-title" class="text-5xl font-bold text-pink-500 mb-4 text-center">Sanrio AI</h1>
-            <p id="msg-desc" class="text-xl text-pink-400 mb-6 text-center">귀여운 친구들이 당신을 기다려요!</p>
+        <div class="bg-white/90 p-8 rounded-[40px] border-8 border-pink-200 shadow-2xl flex flex-col items-center max-w-[90vw]">
+            <h1 id="msg-title" class="text-5xl font-bold text-pink-500 mb-2 text-center">Sanrio AI</h1>
+            <p id="msg-desc" class="text-xl text-pink-400 mb-6 text-center">귀여운 친구들과 함께 놀아요!</p>
             
             <div id="ai-feedback" class="ai-comment-box hidden text-pink-600 text-center mb-6">
                 <div id="ai-text">Gemini가 분석 중...</div>
@@ -171,11 +172,11 @@
 
             <button id="start-btn" class="btn-fancy text-2xl mb-6">게임 시작 ✨</button>
             
-            <div id="controls-info" class="text-pink-400 text-sm bg-pink-50 p-4 rounded-xl border border-pink-100">
+            <div id="controls-info" class="text-pink-400 text-sm bg-pink-50/80 p-4 rounded-xl border border-pink-100">
                 <p>💻 PC: 마우스 이동 / 📱 모바일: 터치 드래그</p>
                 <p class="mt-1 font-bold">✨ AI 버튼을 누르면 패들이 5초간 길어져요!</p>
             </div>
-            <button id="main-music-btn" class="mt-4 text-pink-400 text-xs underline">BGM 설정: ON</button>
+            <button id="main-music-btn" class="mt-4 text-pink-500 text-xs underline font-bold">BGM 설정: ON</button>
         </div>
     </div>
 
@@ -288,7 +289,6 @@
     document.addEventListener('mousedown', initAudioTrigger);
     document.addEventListener('touchstart', initAudioTrigger);
 
-    // 테마 설정
     const themes = [
         { name: '헬로키티', color: '#ff6b6b', emoji: '🍎' },
         { name: '마이멜로디', color: '#ff92a9', emoji: '🌸' },
