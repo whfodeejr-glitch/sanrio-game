@@ -10,8 +10,8 @@
         
         body {
             font-family: 'Gaegu', cursive;
-            background: linear-gradient(rgba(255, 238, 242, 0.7), rgba(255, 238, 242, 0.7)), 
-                        url('https://images.unsplash.com/photo-1513151233558-d860c5398176?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat;
+            /* 사용자 업로드 이미지를 배경으로 설정 */
+            background: url('https://api.clover.com/artifacts/sanrio-breakout-ai/public/data/게임배경.jpeg') center/cover no-repeat;
             background-attachment: fixed;
             margin: 0;
             padding: 0;
@@ -34,13 +34,14 @@
         }
 
         canvas {
-            background-color: rgba(255, 255, 255, 0.6);
+            /* 배경 이미지가 살짝 비치도록 투명도 조정 */
+            background-color: rgba(255, 255, 255, 0.4);
             border: 6px solid #ffb6c1;
             border-radius: 24px;
             box-shadow: 0 15px 35px rgba(255, 182, 193, 0.4);
             max-width: 95vw;
             max-height: 70vh;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(3px);
         }
 
         .ui-panel {
@@ -97,13 +98,14 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(255, 238, 242, 0.85);
+            /* 오버레이 배경도 살짝 투명하게 하여 배경이 보이도록 함 */
+            background: rgba(255, 238, 242, 0.7);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             z-index: 20;
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(5px);
         }
 
         .ai-comment-box {
@@ -173,7 +175,6 @@
                 <p>💻 PC: 마우스 이동 / 📱 모바일: 터치 드래그</p>
                 <p class="mt-1 font-bold">✨ AI 버튼을 누르면 패들이 5초간 길어져요!</p>
             </div>
-            <!-- 메인 화면에서도 음악 제어 가능 -->
             <button id="main-music-btn" class="mt-4 text-pink-400 text-xs underline">BGM 설정: ON</button>
         </div>
     </div>
@@ -207,7 +208,7 @@
     let aiPowerupAvailable = true;
     let musicEnabled = true;
 
-    // --- Audio System (Web Audio API) ---
+    // --- Audio System ---
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     let bgmInterval = null;
 
@@ -215,37 +216,28 @@
         if (audioCtx.state === 'suspended') audioCtx.resume();
         const oscillator = audioCtx.createOscillator();
         const gainNode = audioCtx.createGain();
-
         oscillator.type = type;
         oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
-        
         gainNode.gain.setValueAtTime(volume, audioCtx.currentTime);
         gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
-
         oscillator.connect(gainNode);
         gainNode.connect(audioCtx.destination);
-
         oscillator.start();
         oscillator.stop(audioCtx.currentTime + duration);
     }
 
-    // 산리오 파티 테마 느낌의 멜로디와 박자
-    // [주파수(음계), 박자(초)]
     const sanrioTheme = [
-        [523.25, 0.2], [659.25, 0.2], [783.99, 0.2], [1046.50, 0.4], // C E G C
-        [880.00, 0.2], [987.77, 0.2], [783.99, 0.4],                // A B G
-        [698.46, 0.2], [783.99, 0.2], [659.25, 0.2], [523.25, 0.4], // F G E C
-        [587.33, 0.2], [493.88, 0.2], [523.25, 0.6]                 // D B C
+        [523.25, 0.2], [659.25, 0.2], [783.99, 0.2], [1046.50, 0.4], 
+        [880.00, 0.2], [987.77, 0.2], [783.99, 0.4],                
+        [698.46, 0.2], [783.99, 0.2], [659.25, 0.2], [523.25, 0.4], 
+        [587.33, 0.2], [493.88, 0.2], [523.25, 0.6]                 
     ];
     let noteIndex = 0;
 
     function playBGM() {
         if (!musicEnabled) return;
-        
         const [freq, duration] = sanrioTheme[noteIndex];
         playTone(freq, 'sine', duration + 0.1, 0.05);
-        
-        // 다음 노트 재생을 위한 타이머 설정
         noteIndex = (noteIndex + 1) % sanrioTheme.length;
         bgmInterval = setTimeout(playBGM, duration * 1000 + 50);
     }
@@ -279,8 +271,7 @@
 
     function toggleMusic() {
         musicEnabled = !musicEnabled;
-        const label = musicEnabled ? "🎵 BGM 끄기" : "🔇 BGM 켜기";
-        musicToggleBtn.innerText = label;
+        musicToggleBtn.innerText = musicEnabled ? "🎵 BGM 끄기" : "🔇 BGM 켜기";
         mainMusicBtn.innerText = `BGM 설정: ${musicEnabled ? 'ON' : 'OFF'}`;
         if (!musicEnabled) stopBGM();
         else startGlobalBGM();
@@ -289,7 +280,6 @@
     musicToggleBtn.addEventListener('click', toggleMusic);
     mainMusicBtn.addEventListener('click', toggleMusic);
 
-    // 초기 BGM 시작 (브라우저 정책상 사용자 인터랙션 후 재생되므로 첫 클릭 시 활성화됨)
     const initAudioTrigger = () => {
         if (musicEnabled && !bgmInterval) startGlobalBGM();
         document.removeEventListener('mousedown', initAudioTrigger);
@@ -298,7 +288,7 @@
     document.addEventListener('mousedown', initAudioTrigger);
     document.addEventListener('touchstart', initAudioTrigger);
 
-    // 캐릭터 테마
+    // 테마 설정
     const themes = [
         { name: '헬로키티', color: '#ff6b6b', emoji: '🍎' },
         { name: '마이멜로디', color: '#ff92a9', emoji: '🌸' },
