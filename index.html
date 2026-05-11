@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sanrio Breakout Adventure ✨ AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&display=swap');
+        
+        body {
+            font-family: 'Gaegu', cursive;
+            background: linear-gradient(rgba(255, 238, 242, 0.7), rgba(255, 238, 242, 0.7)), 
+                        url('https://images.unsplash.com/photo-1513151233558-d860c5398176?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat;
+            background-attachment: fixed;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            touch-action: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        #game-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        canvas {
+            background-color: rgba(255, 255, 255, 0.6);
+            border: 6px solid #ffb6c1;
+            border-radius: 24px;
+            box-shadow: 0 15px 35px rgba(255, 182, 193, 0.4);
+            max-width: 95vw;
+            max-height: 70vh;
+            backdrop-filter: blur(5px);
+        }
+
+        .ui-panel {
+            width: 95vw;
+            max-width: 600px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 25px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            margin-bottom: 15px;
+            border: 3px solid #ffb6c1;
+            z-index: 5;
+        }
+
+        .btn-fancy {
+            background: linear-gradient(135deg, #ffb6c1 0%, #ff8fa3 100%);
+            color: white;
+            padding: 12px 35px;
+            border-radius: 50px;
+            font-weight: bold;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 3px solid #ffffff;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 143, 163, 0.3);
+        }
+
+        .btn-fancy:hover:not(:disabled) {
+            transform: scale(1.08);
+            box-shadow: 0 6px 20px rgba(255, 143, 163, 0.5);
+        }
+
+        .btn-ai {
+            background: linear-gradient(135deg, #c8b6ff 0%, #b19cd9 100%);
+            border-color: #f3e8ff;
+        }
+
+        .btn-music {
+            background: linear-gradient(135deg, #a2d2ff 0%, #70a1ff 100%);
+            padding: 8px 15px;
+            font-size: 0.875rem;
+        }
+
+        .btn-fancy:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            filter: grayscale(1);
+        }
+
+        #message-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 238, 242, 0.85);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 20;
+            backdrop-filter: blur(8px);
+        }
+
+        .ai-comment-box {
+            background: white;
+            padding: 15px;
+            border-radius: 20px;
+            border: 2px dashed #ffb6c1;
+            margin-top: 15px;
+            max-width: 300px;
+            position: relative;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .hidden { display: none !important; }
+
+        #ai-loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,182,193,0.3);
+            border-radius: 50%;
+            border-top-color: #ffb6c1;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <!-- 상단 UI -->
+    <div id="top-ui" class="ui-panel text-xl text-pink-500 hidden">
+        <div class="flex flex-col">
+            <div>💖 점수: <span id="score">0</span></div>
+            <div>🎀 목숨: <span id="lives">5</span></div>
+        </div>
+        <div class="flex flex-col gap-2">
+            <button id="ai-powerup-btn" class="btn-fancy btn-ai text-sm px-4 py-1">
+                ✨ AI 패들 확장
+            </button>
+            <button id="music-toggle-btn" class="btn-fancy btn-music text-xs px-4 py-1">
+                🎵 BGM 끄기
+            </button>
+        </div>
+    </div>
+
+    <!-- 오버레이 -->
+    <div id="message-overlay">
+        <div class="bg-white p-8 rounded-[40px] border-8 border-pink-200 shadow-2xl flex flex-col items-center max-w-[90vw]">
+            <h1 id="msg-title" class="text-5xl font-bold text-pink-500 mb-4 text-center">Sanrio AI</h1>
+            <p id="msg-desc" class="text-xl text-pink-400 mb-6 text-center">귀여운 친구들이 당신을 기다려요!</p>
+            
+            <div id="ai-feedback" class="ai-comment-box hidden text-pink-600 text-center mb-6">
+                <div id="ai-text">Gemini가 분석 중...</div>
+                <div id="ai-loading-spinner" class="mt-2 hidden"><div id="ai-loading"></div></div>
+            </div>
+
+            <button id="start-btn" class="btn-fancy text-2xl mb-6">게임 시작 ✨</button>
+            
+            <div id="controls-info" class="text-pink-400 text-sm bg-pink-50 p-4 rounded-xl border border-pink-100">
+                <p>💻 PC: 마우스 이동 / 📱 모바일: 터치 드래그</p>
+                <p class="mt-1 font-bold">✨ AI 버튼을 누르면 패들이 5초간 길어져요!</p>
+            </div>
+            <!-- 메인 화면에서도 음악 제어 가능 -->
+            <button id="main-music-btn" class="mt-4 text-pink-400 text-xs underline">BGM 설정: ON</button>
+        </div>
+    </div>
+
+    <canvas id="gameCanvas" class="hidden"></canvas>
+</div>
+
+<script>
+    const apiKey = "";
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'sanrio-breakout-ai';
+
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const scoreElement = document.getElementById('score');
+    const livesElement = document.getElementById('lives');
+    const startBtn = document.getElementById('start-btn');
+    const overlay = document.getElementById('message-overlay');
+    const topUi = document.getElementById('top-ui');
+    const msgTitle = document.getElementById('msg-title');
+    const msgDesc = document.getElementById('msg-desc');
+    const aiFeedback = document.getElementById('ai-feedback');
+    const aiText = document.getElementById('ai-text');
+    const aiLoadingSpinner = document.getElementById('ai-loading-spinner');
+    const aiPowerupBtn = document.getElementById('ai-powerup-btn');
+    const musicToggleBtn = document.getElementById('music-toggle-btn');
+    const mainMusicBtn = document.getElementById('main-music-btn');
+
+    let score = 0;
+    let lives = 5; 
+    let gameState = 'ready';
+    let aiPowerupAvailable = true;
+    let musicEnabled = true;
+
+    // --- Audio System (Web Audio API) ---
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    let bgmInterval = null;
+
+    function playTone(freq, type, duration, volume = 0.1) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+
+        oscillator.type = type;
+        oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        
+        gainNode.gain.setValueAtTime(volume, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        oscillator.start();
+        oscillator.stop(audioCtx.currentTime + duration);
+    }
+
+    // 산리오 파티 테마 느낌의 멜로디와 박자
+    // [주파수(음계), 박자(초)]
+    const sanrioTheme = [
+        [523.25, 0.2], [659.25, 0.2], [783.99, 0.2], [1046.50, 0.4], // C E G C
+        [880.00, 0.2], [987.77, 0.2], [783.99, 0.4],                // A B G
+        [698.46, 0.2], [783.99, 0.2], [659.25, 0.2], [523.25, 0.4], // F G E C
+        [587.33, 0.2], [493.88, 0.2], [523.25, 0.6]                 // D B C
+    ];
+    let noteIndex = 0;
+
+    function playBGM() {
+        if (!musicEnabled) return;
+        
+        const [freq, duration] = sanrioTheme[noteIndex];
+        playTone(freq, 'sine', duration + 0.1, 0.05);
+        
+        // 다음 노트 재생을 위한 타이머 설정
+        noteIndex = (noteIndex + 1) % sanrioTheme.length;
+        bgmInterval = setTimeout(playBGM, duration * 1000 + 50);
+    }
+
+    function startGlobalBGM() {
+        if (bgmInterval) clearTimeout(bgmInterval);
+        playBGM();
+    }
+
+    function stopBGM() {
+        if (bgmInterval) {
+            clearTimeout(bgmInterval);
+            bgmInterval = null;
+        }
+    }
+
+    const soundEffects = {
+        bounce: () => playTone(600, 'triangle', 0.1),
+        brick: () => playTone(800, 'square', 0.1),
+        paddle: () => playTone(400, 'sine', 0.15),
+        fail: () => {
+            playTone(300, 'sawtooth', 0.2);
+            setTimeout(() => playTone(200, 'sawtooth', 0.3), 150);
+        },
+        powerup: () => {
+            playTone(500, 'sine', 0.1);
+            setTimeout(() => playTone(700, 'sine', 0.1), 100);
+            setTimeout(() => playTone(900, 'sine', 0.2), 200);
+        }
+    };
+
+    function toggleMusic() {
+        musicEnabled = !musicEnabled;
+        const label = musicEnabled ? "🎵 BGM 끄기" : "🔇 BGM 켜기";
+        musicToggleBtn.innerText = label;
+        mainMusicBtn.innerText = `BGM 설정: ${musicEnabled ? 'ON' : 'OFF'}`;
+        if (!musicEnabled) stopBGM();
+        else startGlobalBGM();
+    }
+
+    musicToggleBtn.addEventListener('click', toggleMusic);
+    mainMusicBtn.addEventListener('click', toggleMusic);
+
+    // 초기 BGM 시작 (브라우저 정책상 사용자 인터랙션 후 재생되므로 첫 클릭 시 활성화됨)
+    const initAudioTrigger = () => {
+        if (musicEnabled && !bgmInterval) startGlobalBGM();
+        document.removeEventListener('mousedown', initAudioTrigger);
+        document.removeEventListener('touchstart', initAudioTrigger);
+    };
+    document.addEventListener('mousedown', initAudioTrigger);
+    document.addEventListener('touchstart', initAudioTrigger);
+
+    // 캐릭터 테마
+    const themes = [
+        { name: '헬로키티', color: '#ff6b6b', emoji: '🍎' },
+        { name: '마이멜로디', color: '#ff92a9', emoji: '🌸' },
+        { name: '쿠로미', color: '#b19cd9', emoji: '😈' },
+        { name: '시나모롤', color: '#a2d2ff', emoji: '☁️' },
+        { name: '폼폼푸린', color: '#ffd93d', emoji: '🍮' }
+    ];
+
+    let ball = { x: 0, y: 0, dx: 4, dy: -4, radius: 10, color: '#ff4d6d' };
+    let paddle = { height: 18, width: 110, originalWidth: 110, x: 0, color: '#ffb6c1' };
+    let bricks = [];
+    const brickRowCount = 5;
+    const brickColumnCount = 6;
+    const brickPadding = 12;
+    const brickOffsetTop = 50;
+    const brickOffsetLeft = 20;
+
+    function resizeCanvas() {
+        const containerWidth = window.innerWidth * 0.95;
+        const containerHeight = window.innerHeight * 0.7;
+        canvas.width = Math.min(containerWidth, 600);
+        canvas.height = Math.min(containerHeight, 500);
+        if (bricks.length > 0) initBricksPosition();
+    }
+
+    async function callGeminiAI(prompt, systemInstruction = "당신은 산리오 캐릭터 중 하나입니다. 따뜻하고 귀엽게 말하세요.") {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+        for (let i = 0; i < 5; i++) {
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: prompt }] }],
+                        systemInstruction: { parts: [{ text: systemInstruction }] }
+                    })
+                });
+                const data = await response.json();
+                return data.candidates?.[0]?.content?.parts?.[0]?.text || "오류가 발생했어요 😿";
+            } catch (err) {
+                await new Promise(r => setTimeout(r, Math.pow(2, i) * 1000));
+            }
+        }
+        return "친구들, 다음에 다시 만나요!";
+    }
+
+    async function generateFeedback(finalScore, isWin) {
+        aiFeedback.classList.remove('hidden');
+        aiLoadingSpinner.classList.remove('hidden');
+        aiText.innerText = "분석 중...";
+        const randomChar = themes[Math.floor(Math.random() * themes.length)];
+        const prompt = `${randomChar.name} 캐릭터 컨셉으로, 점수 ${finalScore}점을 받은 사용자에게 ${isWin ? '축하' : '위로'}의 한마디를 100자 이내로 해주세요.`;
+        const result = await callGeminiAI(prompt);
+        aiLoadingSpinner.classList.add('hidden');
+        aiText.innerText = result;
+    }
+
+    function initBricks() {
+        bricks = [];
+        for (let c = 0; c < brickColumnCount; c++) {
+            bricks[c] = [];
+            for (let r = 0; r < brickRowCount; r++) {
+                bricks[c][r] = { x: 0, y: 0, status: 1, theme: themes[r % themes.length] };
+            }
+        }
+        initBricksPosition();
+    }
+
+    function initBricksPosition() {
+        const availableWidth = canvas.width - (brickOffsetLeft * 2);
+        const bWidth = (availableWidth - (brickPadding * (brickColumnCount - 1))) / brickColumnCount;
+        const bHeight = 28;
+        for (let c = 0; c < brickColumnCount; c++) {
+            for (let r = 0; r < brickRowCount; r++) {
+                bricks[c][r].x = (c * (bWidth + brickPadding)) + brickOffsetLeft;
+                bricks[c][r].y = (r * (bHeight + brickPadding)) + brickOffsetTop;
+            }
+        }
+    }
+
+    function movePaddle(clientX) {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        let relativeX = (clientX - rect.left) * scaleX;
+        if (relativeX > 0 && relativeX < canvas.width) {
+            paddle.x = relativeX - paddle.width / 2;
+        }
+    }
+
+    document.addEventListener("mousemove", (e) => movePaddle(e.clientX));
+    document.addEventListener("touchmove", (e) => {
+        movePaddle(e.touches[0].clientX);
+        e.preventDefault();
+    }, { passive: false });
+
+    function draw() {
+        if (gameState !== 'playing') return;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        const availableWidth = canvas.width - (brickOffsetLeft * 2);
+        const bWidth = (availableWidth - (brickPadding * (brickColumnCount - 1))) / brickColumnCount;
+        const bHeight = 28;
+        
+        for (let c = 0; c < brickColumnCount; c++) {
+            for (let r = 0; r < brickRowCount; r++) {
+                if (bricks[c][r].status === 1) {
+                    let b = bricks[c][r];
+                    ctx.beginPath();
+                    ctx.roundRect(b.x, b.y, bWidth, bHeight, 10);
+                    ctx.fillStyle = b.theme.color;
+                    ctx.fill();
+                    ctx.font = "16px Arial";
+                    ctx.fillStyle = "white";
+                    ctx.textAlign = "center";
+                    ctx.textBaseline = "middle";
+                    ctx.fillText(b.theme.emoji, b.x + bWidth/2, b.y + bHeight/2 + 2);
+                    
+                    if (ball.x > b.x && ball.x < b.x + bWidth && ball.y > b.y && ball.y < b.y + bHeight) {
+                        ball.dy = -ball.dy;
+                        b.status = 0;
+                        score += 10;
+                        scoreElement.innerText = score;
+                        soundEffects.brick();
+                        if (score === brickRowCount * brickColumnCount * 10) victory();
+                    }
+                }
+            }
+        }
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+        ctx.fillStyle = ball.color;
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = "rgba(255, 77, 109, 0.5)";
+        ctx.fill();
+        ctx.restore();
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.roundRect(paddle.x, canvas.height - paddle.height - 15, paddle.width, paddle.height, 12);
+        ctx.fillStyle = paddle.color;
+        ctx.fill();
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        ctx.restore();
+
+        if (ball.x + ball.dx > canvas.width - ball.radius || ball.x + ball.dx < ball.radius) {
+            ball.dx = -ball.dx;
+            soundEffects.bounce();
+        }
+        if (ball.y + ball.dy < ball.radius) {
+            ball.dy = -ball.dy;
+            soundEffects.bounce();
+        } else if (ball.y + ball.dy > canvas.height - ball.radius - 15) {
+            if (ball.x > paddle.x && ball.x < paddle.x + paddle.width) {
+                ball.dy = -Math.abs(ball.dy);
+                let hitPos = (ball.x - (paddle.x + paddle.width / 2)) / (paddle.width / 2);
+                ball.dx = hitPos * 5;
+                soundEffects.paddle();
+            } else if (ball.y + ball.dy > canvas.height) {
+                lives--;
+                livesElement.innerText = lives;
+                soundEffects.fail();
+                if (lives <= 0) gameOver();
+                else resetBall();
+            }
+        }
+        ball.x += ball.dx;
+        ball.y += ball.dy;
+        requestAnimationFrame(draw);
+    }
+
+    function resetBall() {
+        ball.x = canvas.width / 2;
+        ball.y = canvas.height - 50;
+        ball.dx = (Math.random() - 0.5) * 6;
+        ball.dy = -5;
+        paddle.x = (canvas.width - paddle.width) / 2;
+    }
+
+    function gameOver() {
+        gameState = 'over';
+        canvas.classList.add('hidden');
+        topUi.classList.add('hidden');
+        msgTitle.innerText = "Game Over 💔";
+        overlay.classList.remove('hidden');
+        generateFeedback(score, false);
+    }
+
+    function victory() {
+        gameState = 'over';
+        canvas.classList.add('hidden');
+        topUi.classList.add('hidden');
+        msgTitle.innerText = "Victory! 🎀";
+        overlay.classList.remove('hidden');
+        generateFeedback(score, true);
+    }
+
+    function startGame() {
+        score = 0;
+        lives = 5; 
+        aiPowerupAvailable = true;
+        aiPowerupBtn.disabled = false;
+        paddle.width = paddle.originalWidth;
+        scoreElement.innerText = score;
+        livesElement.innerText = lives;
+        aiFeedback.classList.add('hidden');
+        resizeCanvas();
+        initBricks();
+        resetBall();
+        overlay.classList.add('hidden');
+        canvas.classList.remove('hidden');
+        topUi.classList.remove('hidden');
+        gameState = 'playing';
+        if (musicEnabled && !bgmInterval) startGlobalBGM();
+        draw();
+    }
+
+    aiPowerupBtn.addEventListener('click', () => {
+        if (!aiPowerupAvailable) return;
+        aiPowerupAvailable = false;
+        aiPowerupBtn.disabled = true;
+        soundEffects.powerup();
+        const originalWidth = paddle.width;
+        paddle.width *= 1.8;
+        setTimeout(() => { paddle.width = originalWidth; }, 5000);
+    });
+
+    startBtn.addEventListener('click', startGame);
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+</script>
+</body>
+</html>
