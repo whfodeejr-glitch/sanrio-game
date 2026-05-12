@@ -39,6 +39,12 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            transition: backdrop-filter 0.5s ease;
+        }
+
+        /* 게임 중일 때 배경에 아주 살짝 들어가는 블러 효과 */
+        .game-playing-blur {
+            backdrop-filter: blur(2px);
         }
 
         canvas {
@@ -111,7 +117,7 @@
             justify-content: center;
             z-index: 20;
             background: rgba(240, 248, 255, 0.5); /* 여린 하늘빛 반투명 배경 */
-            backdrop-filter: blur(5px); /* 뒷배경을 부드럽게 흐리게 */
+            /* 시작 화면을 위해 블러 제거 */
         }
 
         .sanrio-card {
@@ -279,6 +285,7 @@
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'sanrio-breakout-ai';
 
     const canvas = document.getElementById('gameCanvas');
+    const gameContainer = document.getElementById('game-container'); // 추가된 부분
     const ctx = canvas.getContext('2d');
     const scoreElement = document.getElementById('score');
     const livesElement = document.getElementById('lives');
@@ -953,6 +960,7 @@
 
     function gameOver() {
         gameState = 'over';
+        gameContainer.classList.remove('game-playing-blur'); // 배경 블러 효과 제거
         canvas.classList.add('hidden');
         topUi.classList.add('hidden');
         msgTitle.innerText = "Game Over 💔";
@@ -963,6 +971,7 @@
 
     function victory() {
         gameState = 'over';
+        gameContainer.classList.remove('game-playing-blur'); // 배경 블러 효과 제거
         canvas.classList.add('hidden');
         topUi.classList.add('hidden');
         msgTitle.innerText = "Victory! 🎀";
@@ -983,6 +992,9 @@
         resizeCanvas();
         initBricks();
         resetBall();
+        
+        gameContainer.classList.add('game-playing-blur'); // 게임 시작 시 배경 블러 추가
+        
         overlay.classList.add('hidden');
         canvas.classList.remove('hidden');
         topUi.classList.remove('hidden');
