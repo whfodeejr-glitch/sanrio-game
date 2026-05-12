@@ -188,7 +188,7 @@
             animation: float 3s ease-in-out infinite;
             box-shadow: 0 8px 20px rgba(204, 230, 255, 0.3);
             color: #7bb5ff;
-            font-size: 0.95rem; /* 글씨 크기를 1.05rem에서 0.95rem으로 줄였습니다 */
+            font-size: 0.95rem; /* 글씨 크기를 1.05rem에서 0.85rem으로 줄였습니다 */
         }
 
         /* 말풍선 꼬리 효과 (바깥쪽 테두리) */
@@ -245,8 +245,8 @@
 <div id="game-container">
     <div id="top-ui" class="ui-panel text-xl text-blue-400 hidden">
         <div class="flex flex-col">
-            <div>💖 점수: <span id="score">0</span></div>
-            <div>🎀 목숨: <span id="lives">5</span></div>
+            <div>점수: <span id="score">0</span></div>
+            <div>목숨: <span id="lives">5</span></div>
         </div>
         <div class="flex flex-col gap-2">
             <button id="paddle-powerup-btn" class="btn-fancy btn-powerup text-sm px-4 py-1">
@@ -260,7 +260,7 @@
 
     <div id="message-overlay">
         <div class="sanrio-card">
-            <h1 id="msg-title" class="sanrio-title">sanrio breakout adventure</h1>
+            <h1 id="msg-title" class="sanrio-title">Sanrio Dream Land</h1>
             <p id="msg-desc" class="text-base text-blue-300 mb-4">귀여운 키티와 함께 벽돌을 깨고 탈출해보세요!</p>
             
             <div id="ai-feedback" class="ai-comment-box hidden text-center">
@@ -268,10 +268,10 @@
                 <div id="ai-loading-spinner" class="mt-2 hidden"><div id="ai-loading"></div></div>
             </div>
 
-            <button id="start-btn" class="btn-start">게임 시작 ✨</button>
+            <button id="start-btn" class="btn-start">게임시작 ✨</button>
             
             <div id="controls-info" class="controls-box">
-                <p>💻 PC: 마우스 이동 / 📱 모바일: 터치 드래그</p>
+                <p>💻 마우스 이동 / 📱 터치 드래그</p>
                 <p class="mt-2 text-blue-400 font-bold">✨ 키티 공을 떨어뜨리지 않게 조심하세요!</p>
             </div>
             <button id="main-music-btn" class="mt-4 text-blue-300 text-sm underline hover:text-blue-500 transition-colors">BGM 설정: ON</button>
@@ -963,7 +963,7 @@
         gameContainer.classList.remove('game-playing-blur'); // 배경 블러 효과 제거
         canvas.classList.add('hidden');
         topUi.classList.add('hidden');
-        msgTitle.innerText = "Game Over 💔";
+        msgTitle.innerText = "Game Over🔚";
         msgDesc.classList.add('hidden');
         overlay.classList.remove('hidden');
         generateFeedback(score, false);
@@ -974,7 +974,7 @@
         gameContainer.classList.remove('game-playing-blur'); // 배경 블러 효과 제거
         canvas.classList.add('hidden');
         topUi.classList.add('hidden');
-        msgTitle.innerText = "Victory! 🎀";
+        msgTitle.innerText = "Victory!🏆";
         msgDesc.classList.add('hidden');
         overlay.classList.remove('hidden');
         generateFeedback(score, true);
