@@ -10,8 +10,11 @@
         
         body {
             font-family: 'Gaegu', cursive;
-            /* 사용자 업로드 이미지를 배경으로 설정 */
-            background: url('https://github.com/whfodeejr-glitch/sanrio-game/raw/main/%E1%84%80%E1%85%A6%E1%84%8B%E1%85%B5%E1%86%B7%E1%84%87%E1%85%A2%E1%84%80%E1%85%A7%E1%86%BC.jpeg') center/cover no-repeat;
+            /* 업로드해주신 이미지를 전체 배경으로 설정 */
+            background-image: url('https://api.clover.com/artifacts/sanrio-breakout-ai/public/data/게임배경.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
             background-attachment: fixed;
             margin: 0;
             padding: 0;
@@ -22,11 +25,11 @@
             justify-content: center;
             min-height: 100vh;
             
-            /* 마우스 커서: 크기를 24x24로 줄이고 하얀 테두리(stroke) 제거 */
+            /* 마우스 커서: 작고 깔끔한 핑크 하트 */
             cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='%23ff6b81'><path d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/></svg>") 12 12, auto;
         }
 
-        /* 버튼 위 커서: 동일하게 테두리 제거 및 크기 최적화 */
+        /* 버튼 위 커서 */
         button, a {
             cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 24 24' fill='%23ff4d6d'><path d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/></svg>") 14 14, pointer !important;
         }
@@ -42,7 +45,7 @@
         }
 
         canvas {
-            background-color: rgba(255, 255, 255, 0.2);
+            background-color: rgba(255, 255, 255, 0.3); /* 배경이 살짝 보이도록 투명도 조정 */
             border: 6px solid #ffb6c1;
             border-radius: 24px;
             box-shadow: 0 15px 35px rgba(255, 182, 193, 0.4);
@@ -102,13 +105,11 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(255, 255, 255, 0); 
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             z-index: 20;
-            backdrop-filter: none;
         }
 
         .ai-comment-box {
@@ -212,7 +213,7 @@
     let aiPowerupAvailable = true;
     let musicEnabled = true;
 
-    // --- Audio System ---
+    // --- 오디오 시스템 ---
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     let bgmInterval = null;
 
