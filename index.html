@@ -6,10 +6,10 @@
     <title>Sanrio Breakout Adventure</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&display=swap');
-        
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap');
+
         body {
-            font-family: 'Gaegu', cursive;
+            font-family: 'Noto Sans KR', sans-serif;
             /* 깃허브 환경에 맞게 로컬 이미지 파일 경로로 수정 */
             background-image: url('./background.jpeg');
             background-size: cover;
@@ -24,11 +24,11 @@
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='%23ff6b81'><path d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/></svg>") 12 12, auto;
+            cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='%237cc0ff'><path d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/></svg>") 12 12, auto;
         }
 
         button, a {
-            cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 24 24' fill='%23ff4d6d'><path d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/></svg>") 14 14, pointer !important;
+            cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 24 24' fill='%234da6ff'><path d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/></svg>") 14 14, pointer !important;
         }
 
         #game-container {
@@ -42,13 +42,13 @@
         }
 
         canvas {
-            background-color: rgba(255, 250, 252, 0.95); /* 따뜻한 핑크빛 도는 부드러운 흰색 */
-            background-image: radial-gradient(#ffd1dc 15%, transparent 16%), radial-gradient(#ffd1dc 15%, transparent 16%);
+            background-color: rgba(245, 250, 255, 0.95); /* 따뜻한 하늘빛 도는 부드러운 흰색 */
+            background-image: radial-gradient(#cce6ff 15%, transparent 16%), radial-gradient(#cce6ff 15%, transparent 16%);
             background-size: 40px 40px;
             background-position: 0 0, 20px 20px;
-            border: 6px solid #ffb6c1;
+            border: 6px solid #a2d2ff;
             border-radius: 24px;
-            box-shadow: 0 15px 35px rgba(255, 182, 193, 0.4);
+            box-shadow: 0 15px 35px rgba(162, 210, 255, 0.4);
             max-width: 95vw;
             max-height: 70vh;
         }
@@ -63,24 +63,24 @@
             background: rgba(255, 255, 255, 0.85);
             border-radius: 20px;
             margin-bottom: 15px;
-            border: 3px solid #ffb6c1;
+            border: 3px solid #a2d2ff;
             z-index: 5;
         }
 
         .btn-fancy {
-            background: linear-gradient(135deg, #ffb6c1 0%, #ff8fa3 100%);
+            background: linear-gradient(135deg, #a2d2ff 0%, #7cc0ff 100%);
             color: white;
             padding: 12px 35px;
             border-radius: 50px;
             font-weight: bold;
             transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             border: 3px solid #ffffff;
-            box-shadow: 0 4px 15px rgba(255, 143, 163, 0.3);
+            box-shadow: 0 4px 15px rgba(124, 192, 255, 0.3);
         }
 
         .btn-fancy:hover:not(:disabled) {
             transform: scale(1.08);
-            box-shadow: 0 6px 20px rgba(255, 143, 163, 0.5);
+            box-shadow: 0 6px 20px rgba(124, 192, 255, 0.5);
         }
 
         .btn-powerup {
@@ -110,23 +110,113 @@
             align-items: center;
             justify-content: center;
             z-index: 20;
+            background: rgba(240, 248, 255, 0.5); /* 여린 하늘빛 반투명 배경 */
+            backdrop-filter: blur(5px); /* 뒷배경을 부드럽게 흐리게 */
+        }
+
+        .sanrio-card {
+            background: rgba(248, 252, 255, 0.98); /* 흰색에 가까운 아주 연한 하늘색 배경 */
+            border-radius: 30px;
+            border: 6px solid #cce6ff; /* 기존보다 더 연한 솜사탕 하늘색 테두리 */
+            box-shadow: 0 15px 30px rgba(204, 230, 255, 0.4), inset 0 0 0 4px #fff, inset 0 0 0 7px #f0f8ff; /* 이중 테두리와 뽀얀 그림자 효과 */
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 450px;
+            width: 90vw;
+            position: relative;
+            text-align: center;
+        }
+
+        .sanrio-title {
+            color: #7bb5ff; /* 조금 더 연해진 파스텔 블루 */
+            text-shadow: 2px 2px 0px #f0f8ff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
+            font-weight: bold;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            line-height: 1.2;
+        }
+
+        .btn-start {
+            background: linear-gradient(135deg, #9fd4ff 0%, #7bb5ff 100%); /* 부드러운 하늘빛 그라데이션 */
+            color: white;
+            padding: 10px 35px;
+            border-radius: 50px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            border: 3px solid #fff;
+            box-shadow: 0 6px 15px rgba(123, 181, 255, 0.4), inset 0 -3px 0 rgba(0,0,0,0.1);
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin-bottom: 15px;
+        }
+
+        .btn-start:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 20px rgba(123, 181, 255, 0.5), inset 0 -3px 0 rgba(0,0,0,0.1);
+        }
+
+        .btn-start:active {
+            transform: translateY(2px) scale(0.98);
+            box-shadow: 0 4px 10px rgba(123, 181, 255, 0.4), inset 0 -1px 0 rgba(0,0,0,0.1);
+        }
+
+        .controls-box {
+            background: #f8fbff;
+            border: 2px dashed #cce6ff;
+            color: #8bc3ff;
+            padding: 12px 15px;
+            border-radius: 15px;
+            font-size: 0.9rem;
         }
 
         .ai-comment-box {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 15px;
+            background: #f8fbff;
+            padding: 15px 20px;
             border-radius: 20px;
-            border: 2px dashed #ffb6c1;
-            margin-top: 15px;
+            border: 3px solid #cce6ff;
+            margin-top: 10px;
+            margin-bottom: 20px;
             max-width: 300px;
             position: relative;
-            animation: bounce 2s infinite;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            animation: float 3s ease-in-out infinite;
+            box-shadow: 0 8px 20px rgba(204, 230, 255, 0.3);
+            color: #7bb5ff;
+            font-size: 0.95rem; /* 글씨 크기를 1.05rem에서 0.95rem으로 줄였습니다 */
         }
 
-        @keyframes bounce {
+        /* 말풍선 꼬리 효과 (바깥쪽 테두리) */
+        .ai-comment-box::after {
+            content: '';
+            position: absolute;
+            top: -16px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 0 16px 16px 16px;
+            border-style: solid;
+            border-color: transparent transparent #cce6ff transparent;
+            display: block;
+            width: 0;
+        }
+
+        /* 말풍선 꼬리 효과 (안쪽 색상) */
+        .ai-comment-box::before {
+            content: '';
+            position: absolute;
+            top: -11px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 0 13px 13px 13px;
+            border-style: solid;
+            border-color: transparent transparent #f8fbff transparent;
+            display: block;
+            width: 0;
+            z-index: 1;
+        }
+
+        @keyframes float {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
+            50% { transform: translateY(-8px); }
         }
 
         .hidden { display: none !important; }
@@ -135,9 +225,9 @@
             display: inline-block;
             width: 20px;
             height: 20px;
-            border: 3px solid rgba(255,182,193,0.3);
+            border: 3px solid rgba(162, 210, 255, 0.3);
             border-radius: 50%;
-            border-top-color: #ffb6c1;
+            border-top-color: #a2d2ff;
             animation: spin 1s ease-in-out infinite;
         }
 
@@ -147,7 +237,7 @@
 <body>
 
 <div id="game-container">
-    <div id="top-ui" class="ui-panel text-xl text-pink-500 hidden">
+    <div id="top-ui" class="ui-panel text-xl text-blue-400 hidden">
         <div class="flex flex-col">
             <div>💖 점수: <span id="score">0</span></div>
             <div>🎀 목숨: <span id="lives">5</span></div>
@@ -163,22 +253,22 @@
     </div>
 
     <div id="message-overlay">
-        <div class="bg-white/90 p-8 rounded-[40px] border-8 border-pink-200 shadow-2xl flex flex-col items-center max-w-[90vw]">
-            <h1 id="msg-title" class="text-4xl font-bold text-pink-500 mb-2 text-center uppercase tracking-tighter">Sanrio Breakout Adventure</h1>
-            <p id="msg-desc" class="text-xl text-pink-400 mb-6 text-center">귀여운 캐릭터 공을 튕겨보세요!</p>
+        <div class="sanrio-card">
+            <h1 id="msg-title" class="sanrio-title">sanrio breakout adventure</h1>
+            <p id="msg-desc" class="text-base text-blue-300 mb-4">귀여운 키티와 함께 벽돌을 깨고 탈출해보세요!</p>
             
-            <div id="ai-feedback" class="ai-comment-box hidden text-pink-600 text-center mb-6">
+            <div id="ai-feedback" class="ai-comment-box hidden text-center">
                 <div id="ai-text">Gemini가 분석 중...</div>
                 <div id="ai-loading-spinner" class="mt-2 hidden"><div id="ai-loading"></div></div>
             </div>
 
-            <button id="start-btn" class="btn-fancy text-2xl mb-6">게임 시작 ✨</button>
+            <button id="start-btn" class="btn-start">게임 시작 ✨</button>
             
-            <div id="controls-info" class="text-pink-400 text-sm bg-pink-50/80 p-4 rounded-xl border border-pink-100">
+            <div id="controls-info" class="controls-box">
                 <p>💻 PC: 마우스 이동 / 📱 모바일: 터치 드래그</p>
-                <p class="mt-1 font-bold">✨ 키티 공을 떨어뜨리지 않게 조심하세요!</p>
+                <p class="mt-2 text-blue-400 font-bold">✨ 키티 공을 떨어뜨리지 않게 조심하세요!</p>
             </div>
-            <button id="main-music-btn" class="mt-4 text-pink-500 text-xs underline font-bold">BGM 설정: ON</button>
+            <button id="main-music-btn" class="mt-4 text-blue-300 text-sm underline hover:text-blue-500 transition-colors">BGM 설정: ON</button>
         </div>
     </div>
 
@@ -186,7 +276,6 @@
 </div>
 
 <script>
-    const apiKey = "";
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'sanrio-breakout-ai';
 
     const canvas = document.getElementById('gameCanvas');
@@ -229,10 +318,10 @@
     }
 
     const sanrioTheme = [
-        [523.25, 0.2], [659.25, 0.2], [783.99, 0.2], [1046.50, 0.4], 
-        [880.00, 0.2], [987.77, 0.2], [783.99, 0.4],                
-        [698.46, 0.2], [783.99, 0.2], [659.25, 0.2], [523.25, 0.4], 
-        [587.33, 0.2], [493.88, 0.2], [523.25, 0.6]                 
+        [523.25, 0.15], [659.25, 0.15], [783.99, 0.15], [659.25, 0.15], [1046.50, 0.3], [783.99, 0.3],
+        [523.25, 0.15], [659.25, 0.15], [783.99, 0.15], [659.25, 0.15], [880.00, 0.3], [783.99, 0.3],
+        [698.46, 0.15], [659.25, 0.15], [587.33, 0.15], [659.25, 0.15], [698.46, 0.15], [783.99, 0.15], [659.25, 0.15], [523.25, 0.15],
+        [587.33, 0.15], [392.00, 0.15], [587.33, 0.15], [659.25, 0.15], [523.25, 0.6]
     ];
     let noteIndex = 0;
 
@@ -257,9 +346,18 @@
     }
 
     const soundEffects = {
-        bounce: () => playTone(600, 'triangle', 0.1),
-        brick: () => playTone(800, 'square', 0.1),
-        paddle: () => playTone(400, 'sine', 0.15),
+        bounce: () => {
+            playTone(600, 'sine', 0.05);
+            setTimeout(() => playTone(900, 'sine', 0.1), 50);
+        },
+        brick: () => {
+            playTone(800, 'sine', 0.05);
+            setTimeout(() => playTone(1200, 'sine', 0.1), 50);
+        },
+        paddle: () => {
+            playTone(400, 'sine', 0.05);
+            setTimeout(() => playTone(700, 'sine', 0.1), 50);
+        },
         fail: () => {
             playTone(300, 'sawtooth', 0.2);
             setTimeout(() => playTone(200, 'sawtooth', 0.3), 150);
@@ -299,7 +397,7 @@
     ];
 
     let ball = { x: 0, y: 0, dx: 4, dy: -4, radius: 14, color: '#ffffff' };
-    let paddle = { height: 18, width: 110, originalWidth: 110, x: 0, color: '#ffb6c1' };
+    let paddle = { height: 18, width: 110, originalWidth: 110, x: 0, color: '#a2d2ff' };
     let bricks = [];
     const brickRowCount = 5;
     const brickColumnCount = 6;
@@ -315,47 +413,59 @@
         if (bricks.length > 0) initBricksPosition();
     }
 
-    async function callGeminiAI(prompt, systemInstruction = "당신은 산리오 캐릭터 중 하나입니다. 따뜻하고 귀엽게 말하세요.") {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-        // Implementing exponential backoff
-        for (let i = 0; i < 5; i++) {
-            try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: prompt }] }],
-                        systemInstruction: { parts: [{ text: systemInstruction }] }
-                    })
-                });
-                if (!response.ok) throw new Error('API Request Failed');
-                const data = await response.json();
-                return data.candidates?.[0]?.content?.parts?.[0]?.text || "오류가 발생했어요 😿";
-            } catch (err) {
-                // 1s, 2s, 4s, 8s, 16s delay
-                await new Promise(r => setTimeout(r, Math.pow(2, i) * 1000));
-            }
-        }
-        return "친구들, 다음에 다시 만나요!";
-    }
-
-    async function generateFeedback(finalScore, isWin) {
+    function generateFeedback(finalScore, isWin) {
         aiFeedback.classList.remove('hidden');
-        aiLoadingSpinner.classList.remove('hidden');
-        aiText.innerText = "분석 중...";
-        const randomChar = themes[Math.floor(Math.random() * themes.length)];
-        const prompt = `${randomChar.name} 캐릭터 컨셉으로, 점수 ${finalScore}점을 받은 사용자에게 ${isWin ? '축하' : '위로'}의 한마디를 100자 이내로 해주세요.`;
-        const result = await callGeminiAI(prompt);
-        aiLoadingSpinner.classList.add('hidden');
-        aiText.innerText = result;
+        aiLoadingSpinner.classList.add('hidden'); // 로딩 스피너 숨김
+        
+        const winMessages = [
+            "우와, 다 깼어! 정말 멋지다멍! 🐶",
+            "대단해! 네가 최고야! 🌸",
+            "흥, 제법이네! 칭찬해 줄게! 😈",
+            "정말 잘했어! 폭신폭신 기분 좋아~ ☁️",
+            "완벽해! 상으로 푸딩을 줄게! 🍮"
+        ];
+
+        const loseMessages = [
+            "아쉽다멍.. 다음엔 꼭 깰 수 있을 거야! 🐶",
+            "울지마! 내가 응원할게! 🌸",
+            "포기하지 마! 다시 도전해보자! 😈",
+            "괜찮아~ 쉬었다가 다시 해보자! ☁️",
+            "조금만 더 하면 됐는데! 다시 해보자! 🍮"
+        ];
+
+        // 승리/패배 여부에 따라 메시지 목록 선택 후 무작위로 하나 뽑기
+        const messages = isWin ? winMessages : loseMessages;
+        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+
+        aiText.innerText = `[최종 점수: ${finalScore}점]\n${randomMessage}`;
     }
 
     function initBricks() {
         bricks = [];
+        
+        // 1. 캐릭터별로 균등한 개수의 배열 생성 (총 30개 = 5종류 * 6개씩)
+        let themePool = [];
+        const totalBricks = brickRowCount * brickColumnCount;
+        const countPerTheme = Math.floor(totalBricks / themes.length);
+        
+        for (let i = 0; i < themes.length; i++) {
+            for (let j = 0; j < countPerTheme; j++) {
+                themePool.push(themes[i]);
+            }
+        }
+        
+        // 2. 생성된 배열을 무작위로 섞기 (Fisher-Yates Shuffle)
+        for (let i = themePool.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [themePool[i], themePool[j]] = [themePool[j], themePool[i]];
+        }
+
+        // 3. 섞인 캐릭터 배열을 바탕으로 벽돌 배치
+        let poolIndex = 0;
         for (let c = 0; c < brickColumnCount; c++) {
             bricks[c] = [];
             for (let r = 0; r < brickRowCount; r++) {
-                bricks[c][r] = { x: 0, y: 0, status: 1, theme: themes[Math.floor(Math.random() * themes.length)] };
+                bricks[c][r] = { x: 0, y: 0, status: 1, theme: themePool[poolIndex++] };
             }
         }
         initBricksPosition();
@@ -846,6 +956,7 @@
         canvas.classList.add('hidden');
         topUi.classList.add('hidden');
         msgTitle.innerText = "Game Over 💔";
+        msgDesc.classList.add('hidden');
         overlay.classList.remove('hidden');
         generateFeedback(score, false);
     }
@@ -855,6 +966,7 @@
         canvas.classList.add('hidden');
         topUi.classList.add('hidden');
         msgTitle.innerText = "Victory! 🎀";
+        msgDesc.classList.add('hidden');
         overlay.classList.remove('hidden');
         generateFeedback(score, true);
     }
